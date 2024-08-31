@@ -16,8 +16,8 @@ export class HomeController {
     }
 
     @Get('find-by-user')
-    async findByUser(@Query('userId') userId: number): Promise<HomeEntity[]> {
-        return this.homeService.findByUser(userId);
+    async findByUser(@Query() query: any): Promise<any> {
+        return this.homeService.findByUser(query);
     }
 
     @Get('find-by-home')

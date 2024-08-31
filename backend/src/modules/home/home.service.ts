@@ -7,6 +7,13 @@ import { UserHomeEntity } from './entity/user-home.entity';
 import { UserEntity } from '../user/entity/user.entity';
 import { UserService } from '../user/user.service';
 
+
+interface PaginatedResult<T> {
+    data: T[];
+    total: number;
+    page: number;
+    limit: number;
+}
 @Injectable()
 export class HomeService {
     constructor(
@@ -32,9 +39,26 @@ export class HomeService {
     }
 
 
-    async findByUser(userId: number): Promise<HomeEntity[]> {
-        const userHomes = await this.userHomeRepository.find({ where: { user_id: userId }, relations: ['home'] });
-        return userHomes.map(userHome => userHome.home);
+    async findByUser(data: any): Promise<PaginatedResult<HomeEntity>> {
+        const { userId, page = 1, limit = 50 } = data
+        if (!userId) {
+            throw new Error("UserId Required")
+        }
+        const skip = (page - 1) * limit;
+        const [userHomes, total] = await this.userHomeRepository.findAndCount({
+            where: { user_id: userId },
+            relations: ['home'],
+            skip,
+            take: limit,
+        });
+
+        // Optionally, you can return pagination metadata along with the results
+        return {
+            data: userHomes.map(userHome => userHome.home),
+            total,
+            page,
+            limit,
+        };
     }
 
     async findByHome(homeId: number): Promise<UserEntity[]> {
