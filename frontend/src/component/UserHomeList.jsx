@@ -14,7 +14,7 @@ const UserHomeList = () => {
     const [isRetryLoading, setIsRetryLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [page, setPage] = useState(1)
-    const [selectedHomeId, setSelectedHomeId] = useState(null);
+    const [selectedHome, setSelectedHome] = useState(null);
 
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -26,18 +26,18 @@ const UserHomeList = () => {
         refetchOnMountOrArgChange: true
     });
 
-    const { data: homeUser, refetch: homeUserRefetch } = useGetUserByHomeQuery({ homeId: selectedHomeId }, {
-        skip: !selectedHomeId,
+    const { data: homeUser, refetch: homeUserRefetch } = useGetUserByHomeQuery({ homeId: selectedHome?.id }, {
+        skip: !selectedHome,
         refetchOnMountOrArgChange: true
     });
 
     const [updateUserInHome, { data: updateUser, error: userUpdateError, isLoading: updateUserLoading }] = useUpdateUserInHomeMutation();
 
     useEffect(() => {
-        if (selectedHomeId) {
+        if (selectedHome) {
             homeUserRefetch()
         }
-    }, [selectedHomeId])
+    }, [selectedHome])
 
     useEffect(() => {
         if (selectedUser) {
@@ -45,8 +45,8 @@ const UserHomeList = () => {
         }
     }, [selectedUser, refetch, page]);
 
-    const handleEditClick = (homeId) => {
-        setSelectedHomeId(homeId);
+    const handleEditClick = (home) => {
+        setSelectedHome(home);
         setModalOpen(true);
     };
 
@@ -76,7 +76,7 @@ const UserHomeList = () => {
     }, [updateUserLoading, userUpdateError])
 
     const handleSave = (selectedUser) => {
-        updateUserInHome({ homeId: selectedHomeId, userIds: selectedUsers })
+        updateUserInHome({ homeId: selectedHome?.id, userIds: selectedUsers })
 
     };
 
@@ -94,7 +94,7 @@ const UserHomeList = () => {
                                             key={card.id}
                                             header={card.street_address}
                                             data={card}
-                                            handleEditClick={() => handleEditClick(card.id)}
+                                            handleEditClick={() => handleEditClick(card)}
                                         />
                                     )
                                 })}
@@ -107,6 +107,7 @@ const UserHomeList = () => {
             {(modalOpen) && (
                 <UserHomeModel
                     isOpen={modalOpen}
+                    homeStreet={selectedHome.street_address}
                     onClose={handleCloseModal}
                     onSave={handleSave}
                     error={userUpdateError}

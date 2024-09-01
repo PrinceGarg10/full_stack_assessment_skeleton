@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { apiSlice } from '../services/apislice';
 import Skeleton from 'react-loading-skeleton';
 
-const UserHomeModel = ({ isOpen, onClose, onSave, users, selectedUsers, setSelectedUsers, isLoading, error }) => {
+const UserHomeModel = ({ isOpen, onClose, onSave, users, selectedUsers, setSelectedUsers, isLoading, homeStreet }) => {
     const allUser = (useSelector((state) =>
         apiSlice.endpoints.getAllUser.select()(state)
     ))?.data;
@@ -34,7 +34,7 @@ const UserHomeModel = ({ isOpen, onClose, onSave, users, selectedUsers, setSelec
     return ReactDOM.createPortal(
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Select Users</h3>
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">{`Modify user for ${homeStreet}`}</h3>
                 {!selectedUsers.length && (
                     <div className="mb-4 p-2 bg-red-100 text-red-600 border border-red-300 rounded">
                         Please select at least one user.
