@@ -103,7 +103,7 @@ docker-compose -f docker-compose.final.yml up --build -d
 2. Install the necessary dependencies:
    `npm install`
 3. Start the backend server:
- `npm run dev`
+   `npm run dev`
 
 ## Frontend Setup
 
