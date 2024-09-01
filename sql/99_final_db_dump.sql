@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `home` (
 );
 
 -- Create user_home table for many-to-many relationship
-CREATE TABLE IF NOT EXISTS `user_home` (
+CREATE TABLE IF NOT EXISTS `home_user` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
     `home_id` INT NOT NULL,

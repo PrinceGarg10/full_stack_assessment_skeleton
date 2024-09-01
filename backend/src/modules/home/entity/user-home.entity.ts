@@ -4,7 +4,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 import { UserEntity } from '../../user/entity/user.entity';
 import { HomeEntity } from './home.entity';
 
-@Entity('user_home')
+@Entity('home_user')
 export class UserHomeEntity {
     @PrimaryGeneratedColumn()
     id: number;
