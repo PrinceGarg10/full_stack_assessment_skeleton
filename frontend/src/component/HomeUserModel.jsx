@@ -26,7 +26,6 @@ const UserHomeModel = ({ isOpen, onClose, onSave, users, selectedUsers, setSelec
 
     const handleSave = () => {
         onSave(selectedUsers);
-        // onClose();
     };
 
     if (!isOpen) return null;

@@ -1,4 +1,3 @@
-// apiSlice.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL, BASE_URL } from './api.url';
 
