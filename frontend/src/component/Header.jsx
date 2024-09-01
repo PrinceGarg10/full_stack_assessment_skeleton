@@ -10,7 +10,8 @@ import ErrorDisplay from './Error';
 
 
 const Header = () => {
-    const { data, error, isLoading } = useGetAllUserQuery();
+    const { data, error, isLoading, refetch } = useGetAllUserQuery();
+    const [isRetryLoading, setIsRetryLoading] = useState(false);
 
     const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch();
@@ -22,25 +23,34 @@ const Header = () => {
         dispatch(setUser(user));
         setIsOpen(false);
     };
-    console.log({ error });
+
+    const handleRefetch = async () => {
+        setIsRetryLoading(true);
+        try {
+            await refetch().unwrap();
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setIsRetryLoading(false);
+        }
+    };
 
     return (
         <header className="flex justify-between items-center bg-white p-4 border-b border-gray-200 w-full">
             <h1 className="text-xl font-semibold">My App</h1>
             {
-                isLoading ? <div className='w-40'> <Skeleton count={2} /></div> :
-                    error ? <ErrorDisplay error={error.error} />
-                        :
-                        <div className="relative">
-                            <button
-                                className="bg-gray-100 border border-gray-300 rounded px-4 py-2 text-gray-700 flex items-center focus:outline-none"
-                                onClick={toggleDropdown}
-                            >
-                                <span className="mr-2">{selectedUser ? selectedUser.username : 'Select User'}</span>
-                            </button>
-                            {isOpen && (
-                                <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-lg w-64 pl-3 max-h-60 overflow-y-auto">
-                                    {data ? data.map((user) => (
+                <div className="relative">
+                    <button
+                        className="bg-gray-100 border border-gray-300 rounded px-4 py-2 text-gray-700 flex items-center focus:outline-none"
+                        onClick={toggleDropdown}
+                    >
+                        <span className="mr-2">{selectedUser ? selectedUser.username : 'Select User'}</span>
+                    </button>
+                    {isOpen && (
+                        <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-lg w-64 pl-3 max-h-60 overflow-y-auto">
+                            {isLoading || isRetryLoading ? <div className='w-40'> <Skeleton count={2} /></div> :
+                                error ? <ErrorDisplay error={error.error || error.data.errorMessage} onRetry={handleRefetch} />
+                                    : data ? data.map((user) => (
                                         <div
                                             key={user.id}
                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-l-2 border-l-black mt-2 mb-1 rounded-l-md"
@@ -50,9 +60,9 @@ const Header = () => {
                                             <div className="text-sm text-gray-600 text-left">{user.email}</div>
                                         </div>
                                     )) : <EmptyState />}
-                                </div>
-                            )}
                         </div>
+                    )}
+                </div>
             }
         </header>
     );
