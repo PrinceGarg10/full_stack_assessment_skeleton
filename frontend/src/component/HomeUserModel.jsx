@@ -1,15 +1,20 @@
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { useSelector } from 'react-redux';
+import { apiSlice } from '../services/apislice';
+import Skeleton from 'react-loading-skeleton';
 
-const users = [
-    { id: '1', name: 'User 1' },
-    { id: '2', name: 'User 2' },
-    { id: '3', name: 'User 3' }
-];
+const UserHomeModel = ({ isOpen, onClose, onSave, users, selectedUsers, setSelectedUsers, isLoading, error }) => {
+    const allUser = (useSelector((state) =>
+        apiSlice.endpoints.getAllUser.select()(state)
+    ))?.data;
 
-const UserHomeModel = ({ isOpen, onClose, onSave, homeId }) => {
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    useEffect(() => {
+        if (users && users.length) {
+            setSelectedUsers(() => users.map((d) => d.id))
+        }
+    }, [users, setSelectedUsers])
 
     const handleCheckboxChange = (id) => {
         setSelectedUsers((prevSelected) =>
@@ -20,13 +25,8 @@ const UserHomeModel = ({ isOpen, onClose, onSave, homeId }) => {
     };
 
     const handleSave = () => {
-        if (selectedUsers.length === 0) {
-            setHasError(true);
-            return;
-        }
-        setHasError(false);
         onSave(selectedUsers);
-        onClose();
+        // onClose();
     };
 
     if (!isOpen) return null;
@@ -41,7 +41,7 @@ const UserHomeModel = ({ isOpen, onClose, onSave, homeId }) => {
                     </div>
                 )}
                 <div className="space-y-3">
-                    {users.map(user => (
+                    {allUser?.map(user => (
                         <div key={user.id} className="flex items-center text-gray-700">
                             <input
                                 type="checkbox"
@@ -54,7 +54,7 @@ const UserHomeModel = ({ isOpen, onClose, onSave, homeId }) => {
                                 htmlFor={user.id}
                                 className={`text-lg ${selectedUsers.includes(user.id) ? 'font-bold' : 'font-normal'}`}
                             >
-                                {user.name}
+                                {user.username}
                             </label>
                         </div>
                     ))}
@@ -66,13 +66,15 @@ const UserHomeModel = ({ isOpen, onClose, onSave, homeId }) => {
                     >
                         Cancel
                     </button>
-                    <button
-                        className={`py-2 px-4 rounded-md text-white ${selectedUsers.length === 0 ? 'bg-blue-300' : 'bg-blue-500 hover:bg-blue-600'}`}
-                        onClick={handleSave}
-                        disabled={selectedUsers.length === 0}
-                    >
-                        Save
-                    </button>
+                    {isLoading ? <div className='w-20'> <Skeleton count={2} /></div> :
+                        <button
+                            className={`py-2 px-4 rounded-md text-white ${selectedUsers.length === 0 ? 'bg-blue-300' : 'bg-blue-500 hover:bg-blue-600'}`}
+                            onClick={handleSave}
+                            disabled={selectedUsers.length === 0}
+                        >
+                            Save
+                        </button>
+                    }
                 </div>
             </div>
         </div>,

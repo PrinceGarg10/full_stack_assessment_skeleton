@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import HomeCard from './HomeCard';
 import UserHomeModel from './HomeUserModel';
 import { useSelector } from 'react-redux';
-import { useGetHomeByUserQuery } from '../services/apislice';
+import { useGetHomeByUserQuery, useGetUserByHomeQuery, useUpdateUserInHomeMutation } from '../services/apislice';
 import EmptyState from './EmptyState';
 import ErrorDisplay from './Error';
 import Skeleton from 'react-loading-skeleton';
@@ -12,10 +12,11 @@ import Pagination from './Pagination';
 const UserHomeList = () => {
     const selectedUser = useSelector((state) => state.selectedUser.user);
     const [isRetryLoading, setIsRetryLoading] = useState(false);
+    const [selectedUsers, setSelectedUsers] = useState([]);
     const [page, setPage] = useState(1)
-    const [selectedCardId, setSelectedCardId] = useState(null);
+    const [selectedHomeId, setSelectedHomeId] = useState(null);
+
     const [modalOpen, setModalOpen] = useState(false);
-    const [modalData, setModalData] = useState(null);
 
     const { data, error, isLoading, refetch } = useGetHomeByUserQuery({
         userId: selectedUser?.id,
@@ -25,26 +26,32 @@ const UserHomeList = () => {
         refetchOnMountOrArgChange: true
     });
 
+    const { data: homeUser, refetch: homeUserRefetch } = useGetUserByHomeQuery({ homeId: selectedHomeId }, {
+        skip: !selectedHomeId,
+        refetchOnMountOrArgChange: true
+    });
+
+    const [updateUserInHome, { data: updateUser, error: userUpdateError, isLoading: updateUserLoading }] = useUpdateUserInHomeMutation();
+
+    useEffect(() => {
+        if (selectedHomeId) {
+            homeUserRefetch()
+        }
+    }, [selectedHomeId])
+
     useEffect(() => {
         if (selectedUser) {
             refetch();
         }
     }, [selectedUser, refetch, page]);
 
-    // Sample data for demonstration
-
-    const handleEditClick = (cardId) => {
-        // Find the card data by id and set it to modalData
-        const cardData = cards.find(card => card.id === cardId);
-        setModalData(cardData);
-        setSelectedCardId(cardId);
+    const handleEditClick = (homeId) => {
+        setSelectedHomeId(homeId);
         setModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setModalOpen(false);
-        setSelectedCardId(null);
-        setModalData(null);
     };
 
     const handleRefetch = async () => {
@@ -58,10 +65,19 @@ const UserHomeList = () => {
         }
     };
 
+    useEffect(() => {
+        if (!updateUserLoading) {
+            handleCloseModal()
+        }
+        if(userUpdateError) {
+            alert(userUpdateError.error || userUpdateError.data?.errorMessage)
+        }
+
+    }, [updateUserLoading, userUpdateError])
+
     const handleSave = (selectedUser) => {
-        console.log('User selected:', selectedUser);
-        // Implement save logic
-        handleCloseModal();
+        updateUserInHome({ homeId: selectedHomeId, userIds: selectedUsers })
+
     };
 
     return (
@@ -78,7 +94,7 @@ const UserHomeList = () => {
                                             key={card.id}
                                             header={card.street_address}
                                             data={card}
-                                            onEditClick={() => handleEditClick(card.id)}
+                                            handleEditClick={() => handleEditClick(card.id)}
                                         />
                                     )
                                 })}
@@ -88,13 +104,16 @@ const UserHomeList = () => {
                         </div>
                         : <EmptyState />
             }
-            {modalOpen && (
+            {(modalOpen) && (
                 <UserHomeModel
                     isOpen={modalOpen}
                     onClose={handleCloseModal}
                     onSave={handleSave}
-                    homeId={selectedCardId}
-                    data={modalData}
+                    error={userUpdateError}
+                    isLoading={updateUserLoading}
+                    selectedUsers={selectedUsers}
+                    setSelectedUsers={setSelectedUsers}
+                    users={homeUser}
                 />
             )}
         </div>

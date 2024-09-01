@@ -1,22 +1,7 @@
 // src/components/Card.js
-import React, { useState } from 'react';
-import UserHomeModel from './HomeUserModel';
+import React from 'react';
 
-const HomeCard = ({ header, data }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleEditClick = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleSave = (selectedUser) => {
-        // Handle the save logic here
-        console.log('User selected:', selectedUser);
-    };
+const HomeCard = ({ header, data, handleEditClick }) => {
 
     return (
         <div className="max-w-sm min-w-80 bg-white shadow-lg rounded-lg overflow-hidden">
@@ -57,7 +42,6 @@ const HomeCard = ({ header, data }) => {
                     Edit user
                 </button>
             </div>
-            <UserHomeModel isOpen={isModalOpen} onClose={handleCloseModal} onSave={handleSave} homeId={data.id} />
         </div>
     );
 };

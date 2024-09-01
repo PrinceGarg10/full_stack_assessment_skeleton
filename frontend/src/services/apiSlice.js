@@ -19,7 +19,11 @@ export const apiSlice = createApi({
         }),
 
         getUserByHome: builder.query({
-            query: () => API_URL.GET_USER_BY_HOME,
+            query: (params) => ({
+                url: API_URL.GET_USER_BY_HOME,
+                method: 'GET',
+                params
+            }),
         }),
 
         updateUserInHome: builder.mutation({
