@@ -99,26 +99,20 @@ docker-compose -f docker-compose.final.yml up --build -d
 ## Backend Setup
 
 1. Navigate to the backend directory:
-   ```bash
-   cd backend
+   `cd backend`
 2. Install the necessary dependencies:
-    ```bash
-   npm install
+   `npm install`
 3. Start the backend server:
-    ```bash
-   npm run dev
+ `npm run dev`
 
 ## Frontend Setup
 
 1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
+   `cd frontend`
 2. Install the necessary dependencies:
-    ```bash
-   npm install
+   `npm install`
 3. Start the frontend server:
-    ```bash
-   npm run dev
+   `npm run dev`
 
 ## Additional Notes
 1. All frontend code is located in the ./frontend directory.
