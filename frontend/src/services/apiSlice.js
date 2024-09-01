@@ -11,7 +11,11 @@ export const apiSlice = createApi({
         }),
 
         getHomeByUser: builder.query({
-            query: () => API_URL.GET_HOME_BY_USER,
+            query: (params) => ({
+                url: API_URL.GET_HOME_BY_USER,
+                method: 'GET',
+                params
+            }),
         }),
 
         getUserByHome: builder.query({

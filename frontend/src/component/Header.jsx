@@ -49,7 +49,7 @@ const Header = () => {
                     {isOpen && (
                         <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded shadow-lg w-64 pl-3 max-h-60 overflow-y-auto">
                             {isLoading || isRetryLoading ? <div className='w-40'> <Skeleton count={2} /></div> :
-                                error ? <ErrorDisplay error={error.error || error.data.errorMessage} onRetry={handleRefetch} />
+                                error ? <ErrorDisplay error={error.error || error.data?.errorMessage} onRetry={handleRefetch} />
                                     : data ? data.map((user) => (
                                         <div
                                             key={user.id}
