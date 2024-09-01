@@ -36,8 +36,8 @@ const Header = () => {
     };
 
     return (
-        <header className="flex justify-between items-center bg-white p-4 border-b border-gray-200 w-full">
-            <h1 className="text-xl font-semibold">My App</h1>
+        <header className="flex justify-between fixed items-center bg-white p-4 border-b border-gray-200 w-full">
+            <h1 className="text-xl font-semibold pl-10">Home.LLC</h1>
             {
                 <div className="relative">
                     <button

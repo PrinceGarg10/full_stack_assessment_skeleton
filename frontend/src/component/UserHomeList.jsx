@@ -87,7 +87,7 @@ const UserHomeList = () => {
                     :
                     data?.data && data.data.length ?
                         <div>
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-4 justify-center mt-24">
                                 {data?.data?.map(card => {
                                     return (
                                         <HomeCard
