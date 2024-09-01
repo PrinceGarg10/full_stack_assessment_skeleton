@@ -23,5 +23,5 @@ npm-debug.log
 /dist
 .DS_Store
 # environment
-.env
+# .env
 firebase-credential.json
