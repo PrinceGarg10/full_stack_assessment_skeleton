@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { json } from 'express';
 import { ApplicationModule } from './modules/app.module';
+import { AllExceptionsFilter } from './modules/common/interceptor/exception.filter';
 /**
  * These are API defaults that can be changed using environment variables,
  * it is not required to change them (see the `.env.example` file)
@@ -42,6 +43,8 @@ async function bootstrap(): Promise<void> {
     app.enableCors({
         origin: '*'
     })
+    app.useGlobalFilters(new AllExceptionsFilter());
+
 
     await app.listen(process.env.API_PORT || API_DEFAULT_PORT).then(() => {
         console.log("")
