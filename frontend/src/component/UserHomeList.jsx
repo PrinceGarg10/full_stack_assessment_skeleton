@@ -7,15 +7,20 @@ import { useGetHomeByUserQuery } from '../services/apislice';
 import EmptyState from './EmptyState';
 import ErrorDisplay from './Error';
 import Skeleton from 'react-loading-skeleton';
+import Pagination from './Pagination';
 
 const UserHomeList = () => {
     const selectedUser = useSelector((state) => state.selectedUser.user);
     const [isRetryLoading, setIsRetryLoading] = useState(false);
+    const [page, setPage] = useState(1)
     const [selectedCardId, setSelectedCardId] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
 
-    const { data, error, isLoading, refetch } = useGetHomeByUserQuery({ userId: selectedUser?.id }, {
+    const { data, error, isLoading, refetch } = useGetHomeByUserQuery({
+        userId: selectedUser?.id,
+        page,
+    }, {
         skip: !selectedUser,
         refetchOnMountOrArgChange: true
     });
@@ -24,7 +29,7 @@ const UserHomeList = () => {
         if (selectedUser) {
             refetch();
         }
-    }, [selectedUser, refetch]);
+    }, [selectedUser, refetch, page]);
 
     // Sample data for demonstration
 
@@ -65,20 +70,24 @@ const UserHomeList = () => {
                 error ? <ErrorDisplay error={error.error || error.data?.errorMessage} onRetry={handleRefetch} />
                     :
                     data?.data && data.data.length ?
-                        <div className="flex flex-wrap gap-4">
-                            {data?.data?.map(card => {
-                                return (
-                                    <HomeCard
-                                        key={card.id}
-                                        header={card.street_address}
-                                        data={card}
-                                        onEditClick={() => handleEditClick(card.id)}
-                                    />
-                                )
-                            })}
-                        </div> : <EmptyState />
-            }
+                        <div>
+                            <div className="flex flex-wrap gap-4">
+                                {data?.data?.map(card => {
+                                    return (
+                                        <HomeCard
+                                            key={card.id}
+                                            header={card.street_address}
+                                            data={card}
+                                            onEditClick={() => handleEditClick(card.id)}
+                                        />
+                                    )
+                                })}
+                            </div>
+                            <Pagination currentPage={Number(page)} totalPages={Number(Math.ceil(data.total / data.limit))} onPageChange={setPage} />
 
+                        </div>
+                        : <EmptyState />
+            }
             {modalOpen && (
                 <UserHomeModel
                     isOpen={modalOpen}
